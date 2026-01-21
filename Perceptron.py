@@ -26,34 +26,22 @@ class Perceptron(object):
 
     def fit(self, X, y):
 
-        #initializing weights to 0
-        self.w_=np.zeros(1+X.shape[1])
-        self.errors_=[]
-
-        print("Weights:", self.w_)
+        self.w_ = np.zeros(1 + X.shape[1])
+        self.errors_ = []
 
         for _ in range(self.n_iter):
-            error = 0
+            errors = 0
 
-            #loop through each input
-            for xi, y in zip(X, y):
+            for xi, target in zip(X, y):
 
-                #1- calculate the ypred (predicted value)
                 y_pred = self.predict(xi)
+                update = self.eta * (target - y_pred)
 
-                #2- calculate update
-                #update = n * (y-ypred)
-                update = self.eta * (y - y_pred)
-                
-                #3- update the weights
-                #(new)Wi = (old)Wi + (change)Wi where change(Wi) = n * (y - ypred) = update * Xi
-                self.w_[1:] = self.w_[1:] + update *xi
-                print("Updated Weights:", self.w_[1:])
+                self.w_[1:] += update * xi
+                self.w_[0] += update
 
-                #update the bias(Xo = 1)
-                self.w_[0] = self.w_[0] + update
+                errors += int(update != 0)
 
-                #if update != 0, it means that ypred != y
-                error += int(update != 0.0)
-                self.errors_.append(error)
+            self.errors_.append(errors)
+
         return self
